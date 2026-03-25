@@ -12,10 +12,10 @@ router.post("/", (req, res) => {
   const createdAt = new Date().toISOString();
   try {
     const stmt = db.prepare(`
-      INSERT INTO users (id, name, email, createdAt)
-      VALUES (?, ?, ?, ?)
+      INSERT INTO users (id, name, email, address, createdAt)
+      VALUES (?, ?, ?, ?, ?)
     `);
-    stmt.run(id, name, email, createdAt);
+    stmt.run(id, name, email, address, createdAt);
 
     const newUser = db.prepare("SELECT * FROM users WHERE id = ?").get(id);
     res.status(201).json(newUser);
