@@ -6,6 +6,7 @@ import menu from "./data/menu.json" with { type: "json" };
 import db from "./data/db.js";
 
 const app = express();
+app.use(express.json());
 const PORT = process.env.PORT || 3000;
 const existingMenu = db.prepare("SELECT COUNT(*) as count FROM menu").get();
 if (existingMenu.count === 0) {
@@ -16,7 +17,7 @@ if (existingMenu.count === 0) {
     insert.run(item.id, item.title, item.desc, item.price);
   }
 }
-app.use(express.json());
+// app.use(express.json());
 app.use("/api", apiRouter);
 
 app.get("/", (_req, res) => {
