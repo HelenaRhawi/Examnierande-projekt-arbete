@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import apiRouter from "./routes/api.js";
+import menuRouter from "./routes/menuRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
