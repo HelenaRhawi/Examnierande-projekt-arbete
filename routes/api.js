@@ -7,7 +7,7 @@ import orderItemRoutes from "./orderItemRoutes.js";
 const router = Router();
 
 router.use("/menu", menuRoutes);
-router.use("/user", userRoutes);
+router.use("/users", userRoutes);
 router.use("/orders", orderRoutes);
 router.use("/orderItem", orderItemRoutes);
 
