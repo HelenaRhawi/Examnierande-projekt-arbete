@@ -23,6 +23,15 @@ router.post("/", (req, res) => {
 
   const id = uuidv4();
   const createdAt = new Date().toISOString();
+  const existingUser = db
+    .prepare("SELECT * FROM users WHERE email = ?")
+    .get(email);
+  if (existingUser) {
+    return res
+      .status(400)
+      .json({ Fel: "Denna e-postadress är redan upptagen" });
+  }
+
   try {
     const stmt = db.prepare(`
       INSERT INTO users (id, name, email, address, createdAt)
@@ -34,7 +43,7 @@ router.post("/", (req, res) => {
     res.status(201).json(newUser);
   } catch (error) {
     console.error("POST /user: ", error);
-    res.status(500).json({ Fel: "Kunde inte skapa användare." });
+    res.status(500).json({ Fel: "Kunde inte skapa användare.", error });
   }
 });
 
@@ -47,6 +56,16 @@ router.put("/:id", (req, res) => {
   const { name, email, address } = req.body;
   if (!name || !email || !address) {
     return res.status(400).json({ fel: "Name, email och adress krävs" });
+  }
+
+  const existingUser = db
+    .prepare("SELECT * FROM users WHERE email = ? AND id != ?")
+    .get(email, id);
+
+  if (existingUser) {
+    return res
+      .status(400)
+      .json({ Fel: "Denna e-postadress är redan upptagen" });
   }
 
   try {
