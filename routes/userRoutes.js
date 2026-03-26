@@ -6,9 +6,11 @@ const router = Router();
 
 router.post("/", (req, res) => {
   const { name, email, address } = req.body;
+
   if (!name || !email || !address) {
     return res.status(400).json({ Fel: "Namn, email och adress krävs." });
   }
+
   const id = uuidv4();
   const createdAt = new Date().toISOString();
   try {
@@ -54,6 +56,24 @@ router.put("/:id", (req, res) => {
   } catch (error) {
     console.error("PUT /users/:id:", error);
     res.status(500).json({ fel: "Kunde inte uppdatera användaren", error });
+  }
+});
+
+router.delete("/:id", (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const stmt = db.prepare("DELETE FROM users WHERE id = ?");
+    const result = stmt.run(id);
+
+    if (result.changes === 0) {
+      return res.status(404).json({ fel: "Användaren hittades inte" });
+    }
+
+    res.status(204).send();
+  } catch (error) {
+    console.error(("DELETE /users/:id", error));
+    res.status(500).json({ fel: "Kunde inte ta bort användaren", error });
   }
 });
 
