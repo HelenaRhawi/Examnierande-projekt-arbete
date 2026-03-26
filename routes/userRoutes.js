@@ -77,14 +77,4 @@ router.delete("/:id", (req, res) => {
   }
 });
 
-router.get("/", (req, res) => {
-  try {
-    const users = db.prepare("SELECT * FROM users").all();
-    res.json(users);
-  } catch (error) {
-    console.error("GET /user:", error);
-    res.status(500).json({ fel: "Kunde inte hämta användare" });
-  }
-});
-
 export default router;
