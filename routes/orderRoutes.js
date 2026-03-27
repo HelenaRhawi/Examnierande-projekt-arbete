@@ -11,21 +11,28 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", validateOrder, (req, res) => {
-  const { userId } = req.body;
-  const validateItems = req.validateItems;
-  const orderId = uuidv4;
-  const eta = Math.floor(Math.random() * 10) + 5;
-  const createdAt = new Date().toISOString();
   try {
-    const stmt = db.prepare(`
+    const { userId } = req.body;
+
+    const validatedItems = req.validatedItems;
+
+    const orderId = uuidv4();
+    const eta = Math.floor(Math.random() * 10) + 5;
+    const createdAt = new Date().toISOString();
+
+    db.prepare(
+      `
       INSERT INTO orders (id, userId, ETA, createdAt)
       VALUES (?, ?, ?, ?)
+    `,
+    ).run(orderId, userId || null, eta, createdAt);
+
+    const insertItem = db.prepare(`
+      INSERT INTO orderItems (id, order_id, menu_id, quantity, price)
+      VALUES (?, ?, ?, ?, ?)
     `);
-    stmt.run(id, userId, eta, createdAt); //kolla om vi får ett fel
-    const insertItem = db.prepare(
-      `INSERT INTO orderItems (id, order_Id, menu_Id, quantity, price) VALUES (?, ?, ?, ?, ?)`,
-    );
-    for (const item of validateItems) {
+
+    for (const item of validatedItems) {
       insertItem.run(
         uuidv4(),
         orderId,
@@ -34,31 +41,37 @@ router.post("/", validateOrder, (req, res) => {
         item.price,
       );
     }
-    const itemsName = db
+
+    const itemsWithNames = db
       .prepare(
-        ` SELECT oi.quantity, oi.price, m.title 
-      FROM orderItems oi 
-      JOIN menu m 
-      ON oi.menu_Id=m.id 
-      WHERE oi.order_id=?`,
+        `
+      SELECT 
+        oi.quantity,
+        oi.price,
+        m.title
+      FROM orderItems oi
+      JOIN menu m ON oi.menu_id = m.id
+      WHERE oi.order_id = ?
+    `,
       )
       .all(orderId);
 
-    const totalCost = itemsName.reduce((sum, item) => {
+    const total = itemsWithNames.reduce((sum, item) => {
       return sum + item.quantity * item.price;
     }, 0);
+
     res.status(201).json({
       orderId,
       eta,
-      totalCost,
-      items: itemsName.map((item) => ({
+      total,
+      items: itemsWithNames.map((item) => ({
         name: item.title,
         quantity: item.quantity,
       })),
     });
   } catch (error) {
-    console.error("POST /order: ", error);
-    res.status(500).json({ Fel: "Kunde inte skapa order.", error });
+    console.error("POST /orders:", error);
+    res.status(500).json({ fel: "Kunde inte skapa order" });
   }
 });
 
