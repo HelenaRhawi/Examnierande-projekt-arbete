@@ -93,7 +93,7 @@ router.post("/", validateOrder, (req, res) => {
     });
   } catch (error) {
     console.error("POST /orders:", error);
-    res.status(500).json({ fel: "Kunde inte skapa order" });
+    res.status(500).json({ fel: "Kunde inte skapa order", error });
   }
 });
 
