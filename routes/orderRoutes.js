@@ -10,6 +10,17 @@ router.get("/", (req, res) => {
   res.json(getAllOrders.all());
 });
 
+router.get("/status/:id", (req, res) => {
+  const orderId = req.params.id;
+  try {
+    const stmt = db.prepare("SELECT ETA FROM orders WHERE id = ?").get(orderId);
+    res.json({ Leveranstid: `${stmt.ETA} min kvar` });
+  } catch (error) {
+    console.error(("GET / status/:id", error));
+    res.status(500).json({ fel: "Kunde inte hitta order", error });
+  }
+});
+
 router.post("/", validateOrder, (req, res) => {
   try {
     const { userId } = req.body;
