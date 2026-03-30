@@ -21,6 +21,43 @@ router.get("/status/:id", (req, res) => {
   }
 });
 
+router.get("/:id", (req, res) => {
+  const id = req.params.id;
+  try {
+    const orders = db
+      .prepare("SELECT id, createdAt FROM orders WHERE userId = ?")
+      .all(id);
+    const orderLoops = orders.map((order) => {
+      const userOrders = db
+        .prepare(
+          `SELECT 
+      oi.quantity, oi.price, m.title 
+      FROM orderItems oi 
+      JOIN menu m ON oi.menu_id = m.id 
+      WHERE oi.order_id =?`,
+        )
+        .all(order.id);
+      const totalPrice = items.reduce((sum, item) => {
+        return sum + item.quantity * item.price;
+      }, 0);
+      return {
+        orderId: order.id,
+        createdAt: order.createdAt,
+        userOrder: userOrders.map((item) => ({
+          name: item.title,
+          quantity: item.quantity,
+          price: `${item.price} SEK per st.`,
+        })),
+        totalPrice,
+      };
+    });
+    res.json(orderLoops);
+  } catch (error) {
+    console.error("GET/:id", error);
+    res.status(500).json({ fel: "Kunde inte hämta orderhistorik", error });
+  }
+});
+
 router.post("/", validateOrder, (req, res) => {
   try {
     const { userId } = req.body;
