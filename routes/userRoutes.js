@@ -1,7 +1,9 @@
 import { Router } from "express";
 import { v4 as uuidv4 } from "uuid";
 import db from "../data/db.js";
-
+import validateUser from "../middelware/validateUsers.js";
+import validateUserUpdate from "../middelware/validateUserUpdate.js";
+import validateID from "../middelware/validateID.js";
 const router = Router();
 
 router.get("/", (req, res) => {
@@ -14,23 +16,11 @@ router.get("/", (req, res) => {
   }
 });
 
-router.post("/", (req, res) => {
+router.post("/", validateUser, (req, res) => {
   const { name, email, address } = req.body;
-
-  if (!name || !email || !address) {
-    return res.status(400).json({ Fel: "Namn, email och adress krävs." });
-  }
 
   const id = uuidv4();
   const createdAt = new Date().toISOString();
-  const existingUser = db
-    .prepare("SELECT * FROM users WHERE email = ?")
-    .get(email);
-  if (existingUser) {
-    return res
-      .status(400)
-      .json({ Fel: "Denna e-postadress är redan upptagen" });
-  }
 
   try {
     const stmt = db.prepare(`
@@ -47,26 +37,9 @@ router.post("/", (req, res) => {
   }
 });
 
-router.put("/:id", (req, res) => {
-  const id = req.params.id;
-  if (!req.body) {
-    return res.status(400).json({ fel: "Body saknas" });
-  }
-
+router.put("/:id", validateID, validateUserUpdate, (req, res) => {
+  const { id } = req.params;
   const { name, email, address } = req.body;
-  if (!name || !email || !address) {
-    return res.status(400).json({ fel: "Name, email och adress krävs" });
-  }
-
-  const existingUser = db
-    .prepare("SELECT * FROM users WHERE email = ? AND id != ?")
-    .get(email, id);
-
-  if (existingUser) {
-    return res
-      .status(400)
-      .json({ Fel: "Denna e-postadress är redan upptagen" });
-  }
 
   try {
     const stmt = db.prepare(`
@@ -74,22 +47,19 @@ router.put("/:id", (req, res) => {
       SET name = ?, email = ?, address = ?
       WHERE id = ?
     `);
-    const result = stmt.run(name, email, address, id);
 
-    if (result.changes === 0) {
-      return res.status(404).json({ fel: "Användaren hittades inte" });
-    }
+    stmt.run(name, email, address, id);
 
     const updateUser = db.prepare("SELECT * FROM users WHERE id = ?").get(id);
     res.json(updateUser);
   } catch (error) {
     console.error("PUT /users/:id:", error);
-    res.status(500).json({ fel: "Kunde inte uppdatera användaren", error });
+    res.status(500).json({ fel: "Serverfel", error });
   }
 });
 
-router.delete("/:id", (req, res) => {
-  const id = req.params.id;
+router.delete("/:id", validateID("users"), (req, res) => {
+  const { id } = req.params;
 
   try {
     const stmt = db.prepare("DELETE FROM users WHERE id = ?");

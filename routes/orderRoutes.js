@@ -2,6 +2,7 @@ import { Router } from "express";
 import { v4 as uuidv4 } from "uuid";
 import db from "../data/db.js";
 import validateOrder from "../middelware/validateOrder.js";
+import validateID from "../middelware/validateID.js";
 
 const router = Router();
 
@@ -10,10 +11,10 @@ router.get("/", (req, res) => {
   res.json(getAllOrders.all());
 });
 
-router.get("/status/:id", (req, res) => {
-  const orderId = req.params.id;
+router.get("/status/:id", validateID("orders"), (req, res) => {
+  const { id } = req.params;
   try {
-    const stmt = db.prepare("SELECT ETA FROM orders WHERE id = ?").get(orderId);
+    const stmt = db.prepare("SELECT ETA FROM orders WHERE id = ?").get(id);
     res.json({ Leveranstid: `${stmt.ETA} min kvar` });
   } catch (error) {
     console.error(("GET / status/:id", error));
@@ -41,7 +42,7 @@ router.get("/:id", (req, res) => {
         return sum + item.quantity * item.price;
       }, 0);
       return {
-        orderId: order.id,
+        id: order.id,
         createdAt: order.createdAt,
         userOrder: userOrders.map((item) => ({
           name: item.title,
