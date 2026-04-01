@@ -13,7 +13,7 @@ export default function validateOrder(req, res, next) {
         throw new Error("menuId saknas");
       }
 
-      if (!item.quantity || item.quantity <= 0) {
+      if (!Number.isInteger(item.quantity) || item.quantity < 0) {
         throw new Error(`Ogiltig quantity för produkt ${item.menuId}`);
       }
 
@@ -26,7 +26,7 @@ export default function validateOrder(req, res, next) {
       }
 
       return {
-        menu_id: menuItem.id,
+        menuId: menuItem.id,
         quantity: item.quantity,
         price: menuItem.price,
       };
