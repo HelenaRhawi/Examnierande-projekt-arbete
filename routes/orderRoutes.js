@@ -20,7 +20,7 @@ router.get("/status/:id", validateID("orders"), (req, res) => {
   const { id } = req.params;
   try {
     const stmt = db.prepare("SELECT ETA FROM orders WHERE id = ?").get(id);
-    res.json({ Leveranstid: `${stmt.ETA} min kvar` });
+    res.json({ ETA: `${stmt.ETA} minutes left` });
   } catch (error) {
     console.error(("GET / status/:id", error));
     res.status(500).json({ Error: "Server error." });
@@ -52,8 +52,8 @@ router.get("/user/:id", validateID("users"), (req, res) => {
         createdAt: order.createdAt,
         userOrder: userOrders.map((item) => ({
           name: item.title,
-          quantity: `${item.quantity} st`,
-          price: `${item.price} SEK per st.`,
+          quantity: `${item.quantity} unit`,
+          price: `${item.price} SEK per unit.`,
         })),
         totalPrice: `${totalPrice} SEK`,
       };
@@ -129,10 +129,10 @@ router.post("/:id", validateID("users"), validateOrder, (req, res) => {
 
       items: items.map((item) => ({
         name: item.title,
-        quantity: `${item.quantity} st.`,
-        price: `${item.price} SEK per st.`,
+        quantity: `${item.quantity} unit.`,
+        price: `${item.price} SEK per unit.`,
       })),
-      eta: `${orderWithUser.ETA} min`,
+      eta: `${orderWithUser.ETA} minutes`,
       totalPrice: `${totalPrice} SEK`,
     });
   } catch (error) {

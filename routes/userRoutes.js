@@ -66,7 +66,7 @@ router.delete("/:id", validateID("users"), (req, res) => {
     const result = stmt.run(id);
 
     if (result.changes === 0) {
-      return res.status(404).json({ fel: "Användaren hittades inte" });
+      return res.status(404).json({ Error: "User was not found" });
     }
 
     res.status(204).send();
