@@ -1,14 +1,19 @@
 import { Router } from "express";
 import { v4 as uuidv4 } from "uuid";
 import db from "../data/db.js";
-import validateOrder from "../middelware/validateOrder.js";
-import validateID from "../middelware/validateID.js";
+import validateOrder from "../middleware/validateOrder.js";
+import validateID from "../middleware/validateID.js";
 
 const router = Router();
 
-router.get("/", (req, res) => {
-  const getAllOrders = db.prepare("SELECT * FROM orders");
-  res.json(getAllOrders.all());
+router.get("/", (_req, res) => {
+  try {
+    const getAllOrders = db.prepare("SELECT * FROM orders");
+    res.json(getAllOrders.all());
+  } catch (error) {
+    console.error(("GET /", error));
+    res.status(500).json({ Error: "Server error." });
+  }
 });
 
 router.get("/status/:id", validateID("orders"), (req, res) => {
@@ -18,7 +23,7 @@ router.get("/status/:id", validateID("orders"), (req, res) => {
     res.json({ Leveranstid: `${stmt.ETA} min kvar` });
   } catch (error) {
     console.error(("GET / status/:id", error));
-    res.status(500).json({ fel: "Kunde inte hitta order", error });
+    res.status(500).json({ Error: "Server error." });
   }
 });
 
@@ -50,13 +55,13 @@ router.get("/user/:id", validateID("users"), (req, res) => {
           quantity: `${item.quantity} st`,
           price: `${item.price} SEK per st.`,
         })),
-        totalPrice,
+        totalPrice: `${totalPrice} SEK`,
       };
     });
     res.json(orderLoops);
   } catch (error) {
     console.error("GET/:id", error);
-    res.status(500).json({ fel: "Kunde inte hämta orderhistorik", error });
+    res.status(500).json({ Error: "Server error." });
   }
 });
 
@@ -124,7 +129,7 @@ router.post("/:id", validateID("users"), validateOrder, (req, res) => {
 
       items: items.map((item) => ({
         name: item.title,
-        quantity: item.quantity,
+        quantity: `${item.quantity} st.`,
         price: `${item.price} SEK per st.`,
       })),
       eta: `${orderWithUser.ETA} min`,
@@ -132,7 +137,7 @@ router.post("/:id", validateID("users"), validateOrder, (req, res) => {
     });
   } catch (error) {
     console.error("POST /orders:", error);
-    res.status(500).json({ fel: "Kunde inte skapa order", error });
+    res.status(500).json({ Error: "Server error." });
   }
 });
 

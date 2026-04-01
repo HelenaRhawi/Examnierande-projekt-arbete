@@ -10,7 +10,7 @@ router.get("/", (req, res) => {
     res.json(menu);
   } catch (error) {
     console.error("GET /menu:", error);
-    res.status(500).json({ Fel: "Kunde inte hämta menyn!", error });
+    res.status(500).json({ Error: "Server error." });
   }
 });
 export default router;

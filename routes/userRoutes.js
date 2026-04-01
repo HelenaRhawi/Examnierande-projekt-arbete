@@ -1,9 +1,9 @@
 import { Router } from "express";
 import { v4 as uuidv4 } from "uuid";
 import db from "../data/db.js";
-import validateUser from "../middelware/validateUsers.js";
-import validateUserUpdate from "../middelware/validateUserUpdate.js";
-import validateID from "../middelware/validateID.js";
+import validateUser from "../middleware/validateUsers.js";
+import validateUserUpdate from "../middleware/validateUserUpdate.js";
+import validateID from "../middleware/validateID.js";
 const router = Router();
 
 router.get("/", (req, res) => {
@@ -12,7 +12,7 @@ router.get("/", (req, res) => {
     res.json(users);
   } catch (error) {
     console.error("GET /user:", error);
-    res.status(500).json({ fel: "Kunde inte hämta användare", error });
+    res.status(500).json({ Error: "Server error." });
   }
 });
 
@@ -33,7 +33,7 @@ router.post("/", validateUser, (req, res) => {
     res.status(201).json(newUser);
   } catch (error) {
     console.error("POST /user: ", error);
-    res.status(500).json({ Fel: "Kunde inte skapa användare.", error });
+    res.status(500).json({ Error: "Server error." });
   }
 });
 
@@ -54,7 +54,7 @@ router.put("/:id", validateID, validateUserUpdate, (req, res) => {
     res.json(updateUser);
   } catch (error) {
     console.error("PUT /users/:id:", error);
-    res.status(500).json({ fel: "Serverfel", error });
+    res.status(500).json({ Error: "Server error." });
   }
 });
 
@@ -72,7 +72,7 @@ router.delete("/:id", validateID("users"), (req, res) => {
     res.status(204).send();
   } catch (error) {
     console.error(("DELETE /users/:id", error));
-    res.status(500).json({ fel: "Kunde inte ta bort användaren", error });
+    res.status(500).json({ Error: "Server error." });
   }
 });
 
