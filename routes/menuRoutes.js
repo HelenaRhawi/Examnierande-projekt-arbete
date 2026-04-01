@@ -4,7 +4,7 @@ import db from "../data/db.js";
 
 const router = Router();
 
-router.get("/", (req, res) => {
+router.get("/", (_req, res) => {
   try {
     const menu = db.prepare("SELECT * FROM menu").all();
     res.json(menu);
