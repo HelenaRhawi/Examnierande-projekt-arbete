@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import db from "../data/db.js";
 import validateOrder from "../middleware/validateOrder.js";
 import validateID from "../middleware/validateID.js";
+import validateOptionalUser from "../middleware/validateOptionalUser.js";
 
 const router = Router();
 
@@ -27,7 +28,7 @@ router.get("/status/:id", validateID("orders"), (req, res) => {
   }
 });
 
-router.get("/user/:id", validateID("users"), (req, res) => {
+router.get("/user/:id/orders", validateID("users"), (req, res) => {
   const { id } = req.params;
   try {
     const orders = db
@@ -65,20 +66,21 @@ router.get("/user/:id", validateID("users"), (req, res) => {
   }
 });
 
-router.post("/:id", validateID("users"), validateOrder, (req, res) => {
+router.post("/", validateOptionalUser, validateOrder, (req, res) => {
   try {
-    const { userId } = req.body;
     const validatedItems = req.validatedItems;
     const orderId = uuidv4();
     const eta = Math.floor(Math.random() * 10) + 5;
     const createdAt = new Date().toISOString();
+
+    const userId = req.user ? req.user.id : null;
 
     db.prepare(
       `
       INSERT INTO orders (id, userId, ETA, createdAt)
       VALUES (?, ?, ?, ?)
     `,
-    ).run(orderId, userId || null, eta, createdAt);
+    ).run(orderId, userId, eta, createdAt);
 
     const insertItem = db.prepare(`
       INSERT INTO orderItems (id, orderId, menuId, quantity, price)
