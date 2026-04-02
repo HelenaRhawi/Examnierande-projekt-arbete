@@ -1,0 +1,14 @@
+{
+  "users": [
+    {
+      "name": "luna",
+      "email": "luna@example.com",
+      "address": "123 Luna St, Luna City, Luna"
+    },
+    {
+      "name": "maria",
+      "email": "maria@example.com",
+      "address": "123 Maria St, Maria City, Maria"
+    }
+  ]
+}

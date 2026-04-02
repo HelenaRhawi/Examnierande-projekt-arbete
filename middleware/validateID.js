@@ -6,7 +6,7 @@ export default function validateID(table, idColumn = "id") {
     const { id } = req.params;
 
     if (!validateUUID(id)) {
-      return res.status(400).json({ Error: "Not valid ID-format" });
+      return res.status(400).json({ Error: "Invalid ID-format" });
     }
 
     const query = `SELECT * FROM ${table} WHERE ${idColumn} = ?`;

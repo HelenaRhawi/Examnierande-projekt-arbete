@@ -35,6 +35,6 @@ export default function validateOrder(req, res, next) {
     req.validatedItems = validatedItems;
     next();
   } catch (error) {
-    return res.status(400).json({ Error: error.message });
+    return res.status(500).json({ Error: "Server error." });
   }
 }

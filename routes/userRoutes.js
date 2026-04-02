@@ -6,8 +6,13 @@ import validateUserUpdate from "../middleware/validateUserUpdate.js";
 import validateID from "../middleware/validateID.js";
 const router = Router();
 
-router.get("/", (_req, res) => {
+router.get("/", (req, res) => {
   try {
+
+    if (req.query.fail === "true") {
+      throw new Error("Simulated failure");
+    }
+
     const users = db.prepare("SELECT * FROM users").all();
     res.json(users);
   } catch (error) {
@@ -37,7 +42,7 @@ router.post("/", validateUser, (req, res) => {
   }
 });
 
-router.put("/:id", validateID, validateUserUpdate, (req, res) => {
+router.put("/:id", validateID("users"), validateUserUpdate, (req, res) => {
   const { id } = req.params;
   const { name, email, address } = req.body;
 
