@@ -10,11 +10,13 @@ export default function validateOrder(req, res, next) {
   try {
     const validatedItems = items.map((item) => {
       if (!item.menuId) {
-        throw new Error("missing menuId");
+        return res.status(400).json({ Error: "Missing menuId" });
       }
 
       if (!Number.isInteger(item.quantity) || item.quantity < 0) {
-        throw new Error(` quantity for item not valid ${item.menuId}`);
+        return res.status(400).json({
+          Error: `Invalid quantity for item ${item.menuId}`,
+        });
       }
 
       const menuItem = db
@@ -22,7 +24,9 @@ export default function validateOrder(req, res, next) {
         .get(item.menuId);
 
       if (!menuItem) {
-        throw new Error(`Product ${item.menuId} does not exist`);
+        return res.status(404).json({
+          Error: `Product ${item.menuId} does not exist`,
+        });
       }
 
       return {
