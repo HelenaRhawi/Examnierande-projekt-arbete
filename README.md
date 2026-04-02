@@ -34,26 +34,18 @@ Servern startar på `http://localhost:3000`.
 
 ## API-dokumentation
 
-[Här lägger ni er API-dokumentation – varje endpoint med metod, URL, body, svar och felfall.
-Se guiden "API-dokumentation" för format och exempel.]
-| Metod | URL | Beskrivning | Body | Svar | Felfall|
-| ------| --------------|--------------------|--------------|-------------|--------|
-| GET | /api/products | hämta menyn | nej | 200 | Json|
-| GET | /api/products:id | hämta specifik prodkut | nej | 200 | 400 |
-| POST | /api/:id | hämta menyn | nej | 200 | Json|
-| PUT | /api/order | hämta order | nej | 201 | Json|
-| DELETE| /api/products | hämta menyn | nej | 200 | Json|
+[API Dokumentation](api-docs.md)
+[I länken ovan kan man finna alla endpoint med metod, URL, body, svar och felfall.]
 
 ## WebSocket-diskussion
 
-[Skriv en kort reflektion: Hur skulle WebSockets kunna användas i det här projektet?
-T.ex. realtidsuppdateringar av orderstatus, live-notiser till baristan, etc.]
+[Orderstatus uppdaterar sig i realtid när t.ex. barisat tagit emot ordern, är färdig med den och leverans är på väg. Samtidigt kan användaren följa sin beställning.]
 
 ## Gruppmedlemmar
 
 | Namn             | Datum  | Signatur = OK |
 | ---------------- | ------ | ------------- |
-| Eva Maria Köning | 260324 | OK 😂         |
-| Helena Rhawi     | 260324 | OK 🐭         |
-| Kirey Perez      | 260324 | OK 🪿         |
-| Jonathan Berhane | 260324 | OK 🌮         |
+| Eva Maria Köning | 260402 | OK 😂         |
+| Helena Rhawi     | 260402 | OK 🐭         |
+| Kirey Perez      | 260402 | OK 🪿         |
+| Jonathan Berhane | 260402 | OK 🌮         |
