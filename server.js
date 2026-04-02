@@ -1,21 +1,13 @@
 import "dotenv/config";
 import express from "express";
 import apiRouter from "./routes/api.js";
-import menu from "./data/menu.json" with { type: "json" };
-import db from "./data/db.js";
+import { seedMenuIfEmpty } from "./data/seed/seedMenu.js";
 
 const app = express();
 app.use(express.json());
 const PORT = process.env.PORT || 3000;
-const existingMenu = db.prepare("SELECT COUNT(*) as count FROM menu").get();
-if (existingMenu.count === 0) {
-  const insert = db.prepare(`INSERT INTO  menu(id, title, desc, price) 
-    VALUES(?, ?, ?, ?)`);
 
-  for (const item of menu.menu) {
-    insert.run(item.id, item.title, item.desc, item.price);
-  }
-}
+seedMenuIfEmpty();
 
 app.use("/api", apiRouter);
 
