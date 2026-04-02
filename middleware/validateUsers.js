@@ -5,7 +5,9 @@ export default function validateUser(req, res, next) {
   const { name, email, address } = req.body;
 
   if (!name || !email || !address) {
-    return res.status(400).json({ Error: "Fill in all fields!" });
+    return res
+      .status(400)
+      .json({ Error: "Name, e-mail and address is manditory!" });
   }
 
   if (
@@ -17,14 +19,14 @@ export default function validateUser(req, res, next) {
     address.trim() === ""
   ) {
     return res.status(400).json({
-      Error: "Name, e-mail and address had to have valid strings",
+      Error: "Name, e-mail and address must have valid strings",
     });
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!emailRegex.test(email)) {
-    return res.status(400).json({ Error: "E-mail is not valid!" });
+    return res.status(400).json({ Error: "Invalid E-mail!" });
   }
 
   const existingUser = db
@@ -33,7 +35,7 @@ export default function validateUser(req, res, next) {
 
   if (existingUser) {
     return res
-      .status(400)
+      .status(409)
       .json({ Error: "This e-mail is already being used!" });
   }
 

@@ -3,6 +3,7 @@ import db from "../data/db.js";
 export default function validateUserUpdate(req, res, next) {
   const { name, email, address } = req.body;
   const { id } = req.params;
+
   if (!name || !email || !address) {
     return res.status(400).json({
       Error: "Name, e-mail and address is manditory!",
@@ -18,7 +19,7 @@ export default function validateUserUpdate(req, res, next) {
     address.trim() === ""
   ) {
     return res.status(400).json({
-      Error: "Name, e-mail and address has to be valid strings!",
+      Error: "Name, e-mail and address must have valid strings!",
     });
   }
 
@@ -26,7 +27,7 @@ export default function validateUserUpdate(req, res, next) {
 
   if (!emailRegex.test(email)) {
     return res.status(400).json({
-      Error: "E-mail format is not valid!",
+      Error: "Invalid E-mail!",
     });
   }
 

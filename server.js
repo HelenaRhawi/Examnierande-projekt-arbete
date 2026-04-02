@@ -1,13 +1,13 @@
 import "dotenv/config";
 import express from "express";
 import apiRouter from "./routes/api.js";
-import { seedMenuIfEmpty } from "./data/seed/seedMenu.js";
+import { runSeeders } from "./data/seed/runSeeders.js";
 
 const app = express();
 app.use(express.json());
 const PORT = process.env.PORT || 3000;
 
-seedMenuIfEmpty();
+runSeeders();
 
 app.use("/api", apiRouter);
 

@@ -6,8 +6,12 @@ import validateUserUpdate from "../middleware/validateUserUpdate.js";
 import validateID from "../middleware/validateID.js";
 const router = Router();
 
-router.get("/", (_req, res) => {
+router.get("/", (req, res) => {
   try {
+    if (req.query.fail === "true") {
+      throw new Error("Simulated failure");
+    }
+
     const users = db.prepare("SELECT * FROM users").all();
     res.json(users);
   } catch (error) {
@@ -37,7 +41,7 @@ router.post("/", validateUser, (req, res) => {
   }
 });
 
-router.put("/:id", validateID, validateUserUpdate, (req, res) => {
+router.put("/:id", validateID("users"), validateUserUpdate, (req, res) => {
   const { id } = req.params;
   const { name, email, address } = req.body;
 
@@ -48,9 +52,14 @@ router.put("/:id", validateID, validateUserUpdate, (req, res) => {
       WHERE id = ?
     `);
 
-    stmt.run(name, email, address, id);
+    const result = stmt.run(name.trim(), email.trim(), address.trim(), id);
+
+    if (result.changes === 0) {
+      return res.status(404).json({ Error: "User not found" });
+    }
 
     const updateUser = db.prepare("SELECT * FROM users WHERE id = ?").get(id);
+
     res.json(updateUser);
   } catch (error) {
     console.error("PUT /users/:id:", error);
