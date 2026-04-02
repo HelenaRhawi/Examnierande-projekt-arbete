@@ -1,4 +1,4 @@
-# Examnierande-projekt-arbete
+# Examinerande-projektarbete
 
 Ett API för att User ska kunna lägga order och läsa orderhistorik.
 
@@ -7,13 +7,15 @@ Ett API för att User ska kunna lägga order och läsa orderhistorik.
 - Node.js
 - Express
 - SQLite (better-sqlite3)
+- Dotenv (.env)
+- UUIDv4
 
 ## Installation
 
 ```bash
 # Klona repot
-git clone [https://github.com/HelenaRhawi/Examnierande-projekt-arbete.git]
-cd [Examinerande-projekt-arbete]
+git clone [https://github.com/HelenaRhawi/Examinerande-projektarbete.git]
+cd [Examinerande-projektarbete]
 
 # Installera beroenden
 npm install
@@ -24,11 +26,11 @@ cp .env.example .env
 
 # Starta servern
 node server.js
-# eller med --watch:
-node --watch server.js
+# eller med nodemon:
+nodemon server.js
 ```
 
-Servern startar på `http://localhost:3000` (eller den port du angett i `.env`).
+Servern startar på `http://localhost:3000`.
 
 ## API-dokumentation
 
