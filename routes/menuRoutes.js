@@ -6,7 +6,7 @@ const router = Router();
 
 router.get("/", (_req, res) => {
   try {
-    const menu = db.prepare("SELECT * FROM menu").all();
+    const menu = db.prepare("SELECT title, desc, price FROM menu").all();
     res.json(menu);
   } catch (error) {
     console.error("GET /menu:", error);

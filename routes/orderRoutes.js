@@ -10,7 +10,7 @@ const router = Router();
 
 router.get("/", (_req, res) => {
   try {
-    const getAllOrders = db.prepare("SELECT * FROM orders");
+    const getAllOrders = db.prepare("SELECT name, address, ETA FROM orders");
     res.json(getAllOrders.all());
   } catch (error) {
     console.error(("GET /", error));
@@ -78,7 +78,7 @@ router.post(
       const orderId = uuidv4();
       const eta = Math.floor(Math.random() * 10) + 5;
       const createdAt = new Date().toISOString();
-      const { name,address } = req.body;
+      const { name, address } = req.body;
 
       const userId = req.user ? req.user.id : null;
 
