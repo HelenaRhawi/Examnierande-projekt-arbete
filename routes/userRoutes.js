@@ -8,7 +8,9 @@ const router = Router();
 
 router.get("/", (req, res) => {
   try {
-    const users = db.prepare("SELECT * FROM users").all();
+    const users = db
+      .prepare("SELECT name, email, address, createdAt FROM users")
+      .all();
     res.json(users);
   } catch (error) {
     console.error("GET /user:", error);
@@ -29,7 +31,9 @@ router.post("/", validateUser, (req, res) => {
     `);
     stmt.run(id, name, email, address, createdAt);
 
-    const newUser = db.prepare("SELECT * FROM users WHERE id = ?").get(id);
+    const newUser = db
+      .prepare("SELECT name, email, address FROM users WHERE id = ?")
+      .get(id);
     res.status(201).json(newUser);
   } catch (error) {
     console.error("POST /user: ", error);
@@ -54,7 +58,9 @@ router.put("/:id", validateID("users"), validateUserUpdate, (req, res) => {
       return res.status(404).json({ Error: "User not found" });
     }
 
-    const updateUser = db.prepare("SELECT * FROM users WHERE id = ?").get(id);
+    const updateUser = db
+      .prepare("SELECT name, email, address FROM users WHERE id = ?")
+      .get(id);
 
     res.json(updateUser);
   } catch (error) {
