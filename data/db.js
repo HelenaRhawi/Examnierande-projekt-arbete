@@ -16,9 +16,11 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS orders (
     id TEXT PRIMARY KEY,
     userId TEXT,
+    name TEXT NOT NULL,
     ETA INTEGER NOT NULL,
+    address NOT NULL,
     createdAt TEXT,
-    FOREIGN KEY(userId) REFERENCES users(id)
+    FOREIGN KEY(userId) REFERENCES users(id) ON DELETE SET NULL
   );
 `);
 
@@ -40,6 +42,13 @@ db.exec(`
     price INTEGER NOT NULL,
     FOREIGN KEY(orderId) REFERENCES orders(id),
     FOREIGN KEY(menuId) REFERENCES menu(id)
+  );
+`);
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS campaigns (
+    id TEXT PRIMARY KEY,
+    discount INTEGER NOT NULL
   );
 `);
 
